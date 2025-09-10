@@ -1,0 +1,87 @@
+# Filebeat configuration to ship Docker container logs to Logstash
+# - Tails json-file logs under /var/lib/docker/containers
+# - Adds Docker metadata (container name, image, labels)
+# - Sends events to Logstash for parsing/enrichment
+
+name: filebeat-rails
+
+# Add environment indicator to each event (e.g., dev, staging, prod)
+fields:
+  env: ${FILEBEAT_ENV}
+fields_under_root: true
+
+filebeat.inputs:
+  - type: container
+    enabled: true
+    # Docker stores container logs here when using the default json-file driver
+    paths:
+      - /var/lib/docker/containers/*/*.log
+
+    # Multiline (Ruby stack traces) — disabled by default
+    # Use this to combine multi-line exceptions into a single event so backtraces
+    # are searchable and not split line-by-line. Typical Ruby stack trace lines
+    # start with whitespace and should be joined to the previous line.
+    #
+    # To enable, uncomment the block below:
+    multiline.type: pattern
+    multiline.pattern: '^[[:space:]]'
+    multiline.negate: false
+    multiline.match: after
+    multiline.max_lines: 500
+    multiline.timeout: 5s
+
+    # Enrich with container metadata (id, name, image, labels)
+    processors:
+      - add_docker_metadata: ~
+
+      # Trim Docker metadata noise: remove container labels while keeping
+      # useful fields like container.id and container.image.name.
+      # Note: with ECS fields (Filebeat 8+), labels are under `container.labels`.
+      # If you still see `docker.container.labels` in events, drop that instead.
+      - drop_fields:
+          when:
+            has_fields: ["container.labels"]
+          fields:
+            - container.labels
+
+      # Optional: if you want ONLY id + image.name, you can also drop other
+      # Docker metadata fields (uncomment as needed):
+      # - drop_fields:
+      #     fields:
+      #       - container.name
+      #       - container.image.tag
+      #       - container.runtime
+
+      # Optional: drop logs from the logging stack itself to reduce noise.
+      # Comment this block if you want to see logs from ELK/Filebeat too.
+      - drop_event:
+          when:
+            or:
+              - contains:
+                  container.name: "elasticsearch"
+              - contains:
+                  container.name: "kibana"
+              - contains:
+                  container.name: "logstash"
+              - contains:
+                  container.name: "filebeat"
+
+    # NOTE: We intentionally do NOT decode JSON here, so Logstash can handle it centrally.
+    # If you prefer to parse JSON in Filebeat, uncomment below and adjust Logstash pipeline:
+    #
+    #  - decode_json_fields:
+    #      fields: ["message"]
+    #      target: "json"
+    #      overwrite_keys: true
+    #      add_error_key: true
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+# Global processors (apply to all events after inputs)
+processors:
+  # Preserve original message if you later parse or mutate fields
+  - add_fields:
+      target: '@metadata'
+      fields:
+        pipeline: default

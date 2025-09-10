@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: ${RAILS_ENV}
+      NODE_ENV: ${NODE_ENV}
+      # Ensure Rails logs to STDOUT so Docker captures them (Filebeat tails container logs)
+      RAILS_LOG_TO_STDOUT: "true"
+      DB_HOST: ${DB_HOST}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app:cached
+    # Label used by Filebeat metadata. Filebeat config ships all containers by default,
+    # but this label is helpful for filtering or targeting in the future.
+    labels:
+      co.elastic.logs/enabled: "true"
+    stdin_open: true
+    tty: true
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}  # change me
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}      # change me
+      PGADMIN_CONFIG_SERVER_MODE: 'False'        # single-user mode (optional)
+    ports:
+      - "5050:80"        # access pgAdmin via http://localhost:5050
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      # Optional: auto-provision servers
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+  
+  # selenium:
+  #   image: selenium/standalone-chromium
+  #   restart: unless-stopped
+
+volumes:
+  db_data:
+  pgadmin_data:

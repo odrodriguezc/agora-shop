@@ -1,0 +1,75 @@
+# ELK stack (Elasticsearch + Kibana + Logstash) with Filebeat shipper
+# This compose stack is independent from the app's compose. Run it from ./logging.
+
+services:
+  elasticsearch:
+    # Single-node Elasticsearch for development. Enable security for production.
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.1
+    environment:
+      - discovery.type=single-node
+      # Disable built-in security in dev. For prod, set to true and configure TLS/users.
+      - xpack.security.enabled=false
+      # JVM heap sizing (adjust depending on your machine)
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"  # Elasticsearch API
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.1
+    environment:
+      # Point Kibana to Elasticsearch
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      # Disable built-in security in dev (match ES). Enable in prod.
+      - xpack.security.enabled=false
+    ports:
+      - "5601:5601"  # Kibana UI
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.14.1
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    # Mount pipeline config (see ./logstash/pipeline/logstash.conf)
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"       # Beats input (Filebeat)
+      - "12201:12201/udp" # Optional GELF input
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    # Build a tiny custom image that bakes in config and entrypoint
+    build:
+      context: ./filebeat
+    image: filebeat-custom:8.14.1
+    # Filebeat needs root to read Docker container log files
+    user: root
+    environment:
+      # Propagates environment name into events (used for index naming)
+      - FILEBEAT_ENV=dev
+    volumes:
+      # Read container logs produced by Docker engine
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      # Enrich events with container metadata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - logstash
+
+volumes:
+  es_data:
