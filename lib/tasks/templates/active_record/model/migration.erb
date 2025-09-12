@@ -1,0 +1,16 @@
+# Temnplate for Active Record migration file for model
+# Add UUID column and index by default
+<% module_namespacing do -%>
+class <%= migration_class_name %> < <%= migration_parent %>
+  def change
+    create_table :<%= table_name %> do |t|
+<% attributes.each do |attribute| -%>
+      t.<%= attribute.type %> :<%= attribute.column_name %><%= ", null: false" if attribute.required? %><%= attribute.has_default? ? ", default: #{attribute.default}" : "" %>
+<% end -%>
+      t.uuid :uuid, null: false, default: -> { "gen_random_uuid()" }
+      t.timestamps
+      t.index :uuid, unique: true
+    end
+  end
+end
+<% end -%>
