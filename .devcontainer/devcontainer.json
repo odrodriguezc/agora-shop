@@ -13,10 +13,11 @@
       "extensions": [
         "ms-azuretools.vscode-docker",
         "Shopify.ruby-lsp",
-        "KoichiSasada.vscode-rdbg"
+        "KoichiSasada.vscode-rdbg",
+        "openai.chatgpt"
       ],
       "settings": {
-        "rubyLsp.useBundler": true,
+        "rubyLsp.useBundler": false,
         "rubyLsp.rubyVersionManager": {
           "identifier": "none"
         }

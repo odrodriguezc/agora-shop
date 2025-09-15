@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_181411) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_175509) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -21,9 +21,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_181411) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
-    t.index ["uuid"], name: "index_sessions_on_uuid", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -31,9 +29,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_181411) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "uuid", default: -> { "gen_random_uuid()" }, null: false
+    t.string "fullname"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
-    t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
   add_foreign_key "sessions", "users"
