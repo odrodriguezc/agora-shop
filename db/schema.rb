@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_15_175509) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_174521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
-  enable_extension "pgcrypto"
 
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -27,9 +26,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_175509) do
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
+    t.string "fullname"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "fullname"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
