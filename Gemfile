@@ -57,6 +57,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Spec test framework [https://rspec.info/]
+  gem "rspec-rails", "~> 8.0.0"
 end
 
 group :development do
@@ -65,8 +68,7 @@ group :development do
   # Load dot env to acces environment variables from `.env` file outside of Docker (useful for Ruby LSP)
   gem "dotenv-rails", groups: [ :development, :test ]
 
-  # Rspect test framework [https://rspec.info/]
-  gem "rspec-rails", "~> 8.0.0"
+  gem "ruby-lsp-rspec", require: false
 end
 
 group :test do

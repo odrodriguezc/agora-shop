@@ -1,0 +1,27 @@
+{
+  "name": "Rails (Docker Compose)",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "web",
+  "workspaceFolder": "/app",
+  "runServices": ["db", "web"],
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [3000],
+  "overrideCommand": true,
+  // "postCreateCommand": "bin/rails db:prepare && RAILS_ENV=test bin/rails db:prepare",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "Shopify.ruby-lsp",
+        "KoichiSasada.vscode-rdbg",
+        "openai.chatgpt"
+      ],
+      "settings": {
+        "rubyLsp.useBundler": false,
+        "rubyLsp.rubyVersionManager": {
+          "identifier": "none"
+        }
+      }
+    }
+  }
+}
