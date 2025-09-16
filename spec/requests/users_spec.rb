@@ -13,119 +13,232 @@ require 'rails_helper'
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
 RSpec.describe "/users", type: :request do
-  
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
+  fixtures :users
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    { fullname: "Spec User", email_address: "specuser@example.com", password: "password_12345" }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    { fullname: "", email_address: "", password: "" }
   }
 
+  before { @test_user = users(:test) }
+
   describe "GET /index" do
-    it "renders a successful response" do
-      User.create! valid_attributes
-      get users_url
-      expect(response).to be_successful
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      it "returns a successful response" do
+        get users_url
+        expect(response).to be_successful
+        expect(response).to_not redirect_to(new_session_url)
+      end
+
+      it "should display only the user authenticated" do
+        get users_url
+        expect(response.body).to include(@test_user.fullname)
+        expect(response.body).to include(@test_user.email_address)
+        users = User.where.not(id: @test_user.id)
+        users.each do |u|
+          expect(response.body).to_not include(u.fullname)
+          expect(response.body).to_not include(u.email_address)
+        end
+      end
+    end
+
+    context "when the user is unauthenticated" do
+      it "redirects to the login page" do
+        get users_url
+        expect(response).to redirect_to(new_session_url)
+      end
     end
   end
 
   describe "GET /show" do
-    it "renders a successful response" do
-      user = User.create! valid_attributes
-      get user_url(user)
-      expect(response).to be_successful
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      it "returns a successful response for the requested user" do
+        get user_url(@test_user)
+        expect(response).to be_successful
+      end
+    end
+
+    context "when the user is unauthenticated" do
+      it "redirects to the login page" do
+        get user_url(@test_user)
+        expect(response).to redirect_to(new_session_url)
+      end
     end
   end
 
   describe "GET /new" do
-    it "renders a successful response" do
-      get new_user_url
-      expect(response).to be_successful
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      it "redirects to the current user's index" do
+        get new_user_url
+        expect(response).to redirect_to(users_url)
+      end
+    end
+
+    context "when the user is unauthenticated" do
+      it "renders the new user form successfully" do
+        get new_user_url
+        expect(response).to be_successful
+      end
     end
   end
 
   describe "GET /edit" do
-    it "renders a successful response" do
-      user = User.create! valid_attributes
-      get edit_user_url(user)
-      expect(response).to be_successful
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      describe "with valid parameters" do
+        it "renders the edit user form successfully" do
+          get edit_user_url(@test_user)
+          expect(response).to be_successful
+        end
+      end
+
+      context "with invalid parameters" do
+        it "renders the edit template with validation errors" do
+          patch user_url(@test_user), params: { user: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(response.body).to include("prohibited this user from being saved")
+        end
+      end
+    end
+
+    context "when the user is unauthenticated" do
+      it "redirects to the login page" do
+        get edit_user_url(@test_user)
+        expect(response).to redirect_to(new_session_url)
+      end
     end
   end
 
   describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new User" do
-        expect {
-          post users_url, params: { user: valid_attributes }
-        }.to change(User, :count).by(1)
-      end
-
-      it "redirects to the created user" do
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      it "redirects to the current user's index" do
         post users_url, params: { user: valid_attributes }
-        expect(response).to redirect_to(user_url(User.last))
+        expect(response).to redirect_to(users_url)
       end
     end
 
-    context "with invalid parameters" do
-      it "does not create a new User" do
-        expect {
-          post users_url, params: { user: invalid_attributes }
-        }.to change(User, :count).by(0)
+    context "when the user is unauthenticated" do
+      describe "with valid parameters" do
+        it "creates a new user successfully" do
+          expect {
+            post users_url, params: { user: valid_attributes }
+          }.to change(User, :count).by(1)
+        end
+
+        it "redirects to the created user's show page" do
+          post users_url, params: { user: valid_attributes }
+          expect(response).to redirect_to(user_url(User.find_by(email_address: valid_attributes[:email_address])))
+        end
       end
 
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post users_url, params: { user: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+      describe "with invalid parameters" do
+        it "does not create a new user" do
+          expect {
+            post users_url, params: { user: invalid_attributes }
+          }.to change(User, :count).by(0)
+        end
+
+        it "renders the new template with a 422 status" do
+          post users_url, params: { user: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
   end
 
   describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+      context "when updating their own information" do
+        context "with valid parameters" do
+          let(:new_attributes) {
+            {
+              fullname: "test_updated",
+              email_address: "test@example.com_updated",
+              password: "password_123_updated"
+            }
+          }
 
-      it "updates the requested user" do
-        user = User.create! valid_attributes
-        patch user_url(user), params: { user: new_attributes }
-        user.reload
-        skip("Add assertions for updated state")
+          it "updates the user with the provided attributes" do
+            patch user_url(@test_user), params: { user: new_attributes }
+            @test_user.reload
+            expect(@test_user.fullname).to eq("test_updated")
+            expect(@test_user.email_address).to eq("test@example.com_updated")
+            expect(@test_user.authenticate("password_123_updated")).to be_truthy
+          end
+
+          it "redirects to the updated user's page" do
+            patch user_url(@test_user), params: { user: new_attributes }
+            @test_user.reload
+            expect(response).to redirect_to(user_url(@test_user))
+          end
+        end
+      end
+      context "when updating another user's information" do
+        let(:other_user) { users(:one) }
+        it "does not allow the update" do
+          patch user_url(other_user), params: { user: valid_attributes }
+          expect(response).to redirect_to(users_url)
+        end
       end
 
-      it "redirects to the user" do
-        user = User.create! valid_attributes
-        patch user_url(user), params: { user: new_attributes }
-        user.reload
-        expect(response).to redirect_to(user_url(user))
+      context "with invalid parameters" do
+        it "renders the edit template with validation errors" do
+          patch user_url(@test_user), params: { user: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_content)
+        end
       end
     end
 
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        user = User.create! valid_attributes
-        patch user_url(user), params: { user: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_content)
+    context "when the user is unauthenticated" do
+      it "redirects to the login page" do
+        patch user_url(@test_user), params: { user: valid_attributes }
+        expect(response).to redirect_to(new_session_url)
       end
     end
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested user" do
-      user = User.create! valid_attributes
-      expect {
-        delete user_url(user)
-      }.to change(User, :count).by(-1)
+    context "when the user is unauthenticated" do
+      it "redirects to the login page" do
+        delete user_url(@test_user)
+        expect(response).to redirect_to(new_session_url)
+      end
     end
 
-    it "redirects to the users list" do
-      user = User.create! valid_attributes
-      delete user_url(user)
-      expect(response).to redirect_to(users_url)
+    context "when the user is authenticated" do
+      before { sign_in_as(@test_user) }
+
+      context "when deleting their own account" do
+        it "deletes the specified user" do
+          expect {
+            delete user_url(@test_user)
+          }.to change(User, :count).by(-1)
+        end
+
+        it "redirects to the users list after deletion" do
+          delete user_url(@test_user)
+          expect(response).to redirect_to(users_url)
+        end
+      end
+      context "when deleting another user's account" do
+        let(:other_user) { users(:one) }
+        it "does not allow the deletion" do
+          expect {
+            delete user_url(other_user)
+          }.to change(User, :count).by(0)
+          expect(response).to redirect_to(users_url)
+        end
+      end
     end
   end
 end

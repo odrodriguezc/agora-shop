@@ -1,10 +1,13 @@
 class UsersController < ApplicationController
-  allow_unauthenticated_access only: %i[new create index]
+  allow_unauthenticated_access only: %i[new create]
+
   before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :authorize_user!, only: %i[ edit update destroy ]
+  before_action :restrict_authenticated_user, only: %i[new create]
 
   # GET /users or /users.json
   def index
-    @users = User.all
+    @users = User.where(id: Current.user.id)
   end
 
   # GET /users/1 or /users/1.json
@@ -66,6 +69,28 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.fetch(:user, {})
+      params.fetch(:user, {}).permit(:fullname, :email_address, :password)
+    end
+
+    def current_user?
+      @user == Current.user
+    end
+
+    # Only current user can edit/update/destroy their own account
+    def authorize_user!
+      return if current_user?
+      respond_to do |format|
+        format.html { redirect_to users_path, alert: "You are not authorized to perform this action." }
+        format.json { head :forbidden }
+      end
+    end
+
+    # Restrict to authenticated users from accessing new/create actions
+    def restrict_authenticated_user
+      return unless authenticated?
+      respond_to do |format|
+        format.html { redirect_to users_path, alert: "You are not authorized to perform this action." }
+        format.json { head :forbidden }
+      end
     end
 end
