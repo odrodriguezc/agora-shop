@@ -1,32 +1,32 @@
 RSpec.shared_examples "renders the user form correctly" do
-  it "renders the form with input fields and placeholders" do
-    @user = user
-    form_action = @user.persisted? ? user_path(@user) : users_path
+  subject(:render_form) { render partial: "users/form", locals: { user: user } }
 
-    render partial: "users/form", locals: { user: @user }
+  let(:form_action) { user.persisted? ? user_path(user) : users_path }
+  let(:submit_label) { user.persisted? ? "Update User" : "Create User" }
+
+  it "renders the form with input fields and placeholders" do
+    render_form
 
     assert_select "form[action=?][method=?]", form_action, "post" do
-      assert_select "input[name=?][placeholder=?]", "user[fullname]", "Enter your full name"
+      assert_select "input[name=?][placeholder=?]", "user[full_name]", "Enter your full name"
       assert_select "input[name=?][placeholder=?]", "user[email_address]", "Enter your email address"
       assert_select "input[name=?][placeholder=?]", "user[password]", "Enter your password"
+      assert_select "input[name=?][placeholder=?]", "user[password_confirmation]", "Confirm your password"
     end
   end
 
   it "renders the submit button with the correct text" do
-    @user = user
-    submit_button_text = @user.persisted? ? "Update User" : "Create User"
+    render_form
 
-    render partial: "users/form", locals: { user: @user }
-
-    assert_select "input[type=?][value=?]", "submit", submit_button_text
+    assert_select "input[type=?][value=?]", "submit", submit_label
   end
 
   it "renders labels for input fields" do
-    @user = user
-    render partial: "users/form", locals: { user: @user }
+    render_form
 
-    assert_select "label[for=?]", "user_fullname", text: "Fullname"
+    assert_select "label[for=?]", "user_full_name", text: "Full Name"
     assert_select "label[for=?]", "user_email_address", text: "Email Address"
     assert_select "label[for=?]", "user_password", text: "Password"
+    assert_select "label[for=?]", "user_password_confirmation", text: "Password Confirmation"
   end
 end

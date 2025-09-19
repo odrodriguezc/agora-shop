@@ -12,8 +12,8 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :fullname, "Fullname", for: "user_fullname", class: "block font-medium text-gray-700" %>
-    <%= form.text_field :fullname, id: "user_fullname", placeholder: "Enter your full name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+    <%= form.label :full_name, "Full Name", for: "user_full_name", class: "block font-medium text-gray-700" %>
+    <%= form.text_field :full_name, id: "user_full_name", placeholder: "Enter your full name", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
   </div>
 
   <div class="field">
@@ -24,6 +24,11 @@
   <div class="field">
     <%= form.label :password, "Password", for: "user_password", class: "block font-medium text-gray-700" %>
     <%= form.password_field :password, id: "user_password", placeholder: "Enter your password", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password_confirmation, "Password Confirmation", for: "user_password_confirmation", class: "block font-medium text-gray-700" %>
+    <%= form.password_field :password_confirmation, id: "user_password_confirmation", placeholder: "Confirm your password", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500" %>
   </div>
 
   <div class="inline mt-4">

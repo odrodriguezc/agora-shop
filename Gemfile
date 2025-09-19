@@ -60,6 +60,9 @@ group :development, :test do
 
   # Spec test framework [https://rspec.info/]
   gem "rspec-rails", "~> 8.0.0"
+
+  # Factory bot for Rails [https://github.com/thoughtbot/factory_bot_rails]
+  gem "factory_bot_rails"
 end
 
 group :development do
@@ -75,4 +78,11 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "rails-controller-testing"
 end
+
+# Authorization library [https://github.com/varvet/pundit]
+gem "pundit", "~> 2.5"
+
+# Roles and permissions management library [ rolify ]
+gem "rolify", "~> 6.0"
