@@ -29,5 +29,8 @@ module App
     # Mission Control Jobs monitoring configuration
     config.mission_control.jobs.base_controller_class = "Admin::BaseController"
     config.mission_control.jobs.http_basic_auth_enabled = false
+
+    # mailer
+    config.action_mailer.deliver_later_queue_name = "mailers"
   end
 end

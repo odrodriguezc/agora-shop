@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     # TODO : Add locale support
     message = "You are not authorized to perform this action."
     respond_to do |format|
-      format.html { redirect_to(request.referrer || root_path, alert: message) }
+      format.html { redirect_back fallback_location: root_path, alert: message  }
       format.json { render json: { error: "not_authorized", message: message }, status: :forbidden }
     end
   end

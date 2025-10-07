@@ -23,6 +23,7 @@ RSpec.describe UsersMailer, type: :mailer do
     shared_examples "welcome email" do |greeting|
       it "delivers the welcome message" do
         aggregate_failures do
+          # NOTE: The formated email with name using email_address_with_name does not work in test environment
           expect(mail.to).to contain_exactly(user.email_address)
           expect(mail.from).to contain_exactly("no-reply@example.com")
           expect(mail.subject).to eq("Welcome to Agora Shop!")

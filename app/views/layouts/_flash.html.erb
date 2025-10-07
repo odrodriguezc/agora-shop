@@ -1,0 +1,10 @@
+<% if flash.any? %>
+  <div class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 space-y-4">
+    <% flash.each do |key, message| %>
+      <div class="px-4 py-3 rounded shadow-lg text-white flex items-center justify-between <%= key == 'notice' ? 'bg-blue-500' : 'bg-red-500' %>">
+        <span><%= message %></span>
+        <a href="#" class="ml-4 text-white hover:text-gray-200 font-bold" onclick="this.parentElement.remove(); return false;">&times;</a>
+      </div>
+    <% end %>
+  </div>
+<% end %>

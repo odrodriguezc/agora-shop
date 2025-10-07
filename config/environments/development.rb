@@ -41,6 +41,18 @@ Rails.application.configure do
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default_options = { from: "Agora Shop <no-reply@example.com>" }
+  config.action_mailer.show_previews = true
+
+  # Mailpit SMTP settings
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: ENV.fetch("SMTP_HOST"),
+    port: ENV.fetch("SMTP_PORT").to_i,
+    enable_starttls_auto: false
+  }
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

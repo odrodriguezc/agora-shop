@@ -60,6 +60,21 @@ services:
   #   image: selenium/standalone-chromium
   #   restart: unless-stopped
 
+  # MailHog
+  mail_service:
+    image: axllent/mailpit
+    container_name: mail_service
+    restart: unless-stopped
+    ports:
+        - 8025:8025
+        - 1025:1025
+    environment:
+        MP_MAX_MESSAGES: ${MP_MAX_MESSAGES}
+        MP_DATABASE: ${MP_DATABASE}
+        MP_SMTP_AUTH_ACCEPT_ANY: ${MP_SMTP_AUTH_ACCEPT_ANY}
+        MP_SMTP_AUTH_ALLOW_INSECURE: ${MP_SMTP_AUTH_ALLOW_INSECURE}
+
+
 volumes:
   db_data:
   pgadmin_data:
