@@ -75,24 +75,24 @@ RSpec.describe User, type: :model do
   end
 
   describe "callbacks" do
-    describe "#assign_default_role" do
+    describe "#onboard" do
       it "adds the guest role when no roles are present" do
         user = create_user
 
-        expect(user.has_role?(:guest)).to be(true)
+        expect(user.has_role?(User::DEFAULT_ROLE)).to be(true)
       end
 
       it "does not add the guest role when roles already exist" do
         user = create_user
-        user.remove_role(:guest)
+        user.remove_role(User::DEFAULT_ROLE)
         user.add_role(:admin)
 
         expect {
-          user.send(:assign_default_role)
+          user.send(:onboard)
         }.not_to change { user.roles.pluck(:name).sort }
 
         expect(user.has_role?(:admin)).to be(true)
-        expect(user.has_role?(:guest)).to be(false)
+        expect(user.has_role?(User::DEFAULT_ROLE)).to be(false)
       end
     end
   end
