@@ -1,4 +1,3 @@
-
 # This class defines the authorization policies for the User model.
 # It inherits from ApplicationPolicy and includes the OwnerOrAdminPolicy module
 # to provide shared methods for determining ownership or admin privileges.

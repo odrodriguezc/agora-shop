@@ -86,3 +86,6 @@ gem "pundit", "~> 2.5"
 
 # Roles and permissions management library [ rolify ]
 gem "rolify", "~> 6.0"
+
+# Jobs monitoring [mission control]
+gem "mission_control-jobs"

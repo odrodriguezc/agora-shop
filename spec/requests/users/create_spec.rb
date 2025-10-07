@@ -38,6 +38,20 @@ RSpec.describe "POST /users", type: :request do
           expect(response).to redirect_to(user_url(created_user))
           expect(flash[:notice]).to eq("User was successfully created.")
         end
+
+        it "enqueues the welcome email" do
+          mail = nil
+
+          with_test_queue_adapter do
+            expect {
+               post users_url, params: valid_params
+            }.to have_enqueued_mail(UsersMailer, :welcome_email)
+            perform_enqueued_jobs
+            mail = ActionMailer::Base.deliveries.last
+            expect(mail.to).to contain_exactly(submitted_email)
+            expect(mail.subject).to eq("Welcome to Agora Shop!")
+          end
+        end
       end
 
       context "when the HTML params are invalid" do
@@ -47,6 +61,17 @@ RSpec.describe "POST /users", type: :request do
           }.not_to change(User, :count)
 
           expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "does not enqueue the welcome email" do
+          with_test_queue_adapter do
+            expect {
+              post users_url, params: invalid_params
+            }.not_to have_enqueued_mail(UsersMailer, :welcome_email)
+            perform_enqueued_jobs
+
+            expect(ActionMailer::Base.deliveries).to be_empty
+          end
         end
       end
     end
@@ -77,5 +102,18 @@ RSpec.describe "POST /users", type: :request do
         expect(response.parsed_body.keys).to include("email_address", "password")
       end
     end
+  end
+
+  # Ensures a clean state for ActiveJob tests
+  def with_test_queue_adapter
+    clear_enqueued_jobs
+    clear_performed_jobs
+    ActionMailer::Base.deliveries.clear
+
+    yield
+  ensure
+    clear_enqueued_jobs
+    clear_performed_jobs
+    ActionMailer::Base.deliveries.clear
   end
 end

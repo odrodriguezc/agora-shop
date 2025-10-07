@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   resources :products
   resource :session
   resources :passwords, param: :token
+
+  namespace :admin do
+    resource :access_check, only: :show, controller: "access_checks"
+
+    # Mission Control web interface for monitoring background jobs
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

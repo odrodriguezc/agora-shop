@@ -1,9 +1,9 @@
 module Users
   class SendWelcomeEmail < Users::Base
-    # TODO : Implement email sending logic here
-    # async
     def call
-      # nil unless user.email_address.present?
+      nil unless user.email_address.present?
+
+      UsersMailer.with(user_id: user.id).welcome_email.deliver_later
     end
   end
 end

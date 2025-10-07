@@ -1,0 +1,30 @@
+<div class="bg-gray-100 p-6 rounded-lg shadow-md">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-800">Welcome to Agora Shop!</h1>
+    <p class="text-gray-600 mt-2">Hi <%= @greeting_name %>,</p>
+  </div>
+  <div class="mt-4">
+    <p class="text-gray-700">
+      We are thrilled to have you join our community.
+    </p>
+    <p class="text-gray-700 mt-2">
+      Here are some quick links to get you started:
+    </p>
+    <ul class="list-disc list-inside mt-2">
+      <li>
+        <a href="<%= products_url %>" class="text-blue-500 hover:underline">
+          Visit our shop
+        </a>
+      </li>
+      <li>
+        <a href="<%= edit_user_url(@user) %>" class="text-blue-500 hover:underline">
+          Manage your account
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="mt-6 text-gray-700">
+    <p>Happy shopping,</p>
+    <p class="font-bold">The Agora Shop Team</p>
+  </div>
+</div>

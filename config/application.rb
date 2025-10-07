@@ -25,5 +25,9 @@ module App
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.lograge.enabled = true
+
+    # Mission Control Jobs monitoring configuration
+    config.mission_control.jobs.base_controller_class = "Admin::BaseController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
   end
 end
