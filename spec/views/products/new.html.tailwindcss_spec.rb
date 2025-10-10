@@ -1,14 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "products/new", type: :view do
-  before(:each) do
-    assign(:product, Product.new())
+  let(:product) { build(:product) }
+
+  before do
+    assign(:product, product)
   end
 
-  it "renders new product form" do
-    render
+  subject(:render_view) { render }
 
-    assert_select "form[action=?][method=?]", products_path, "post" do
-    end
+  it "renders new product form" do
+    render_view
+    expect(rendered).to have_selector("form[action='#{products_path}'][method='post']")
   end
 end

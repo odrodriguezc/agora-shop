@@ -1,15 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe "products/index", type: :view do
-  before(:each) do
-    assign(:products, [
-      Product.create!(),
-      Product.create!()
-    ])
+  before do
+    assign(:products, products)
   end
 
-  it "renders a list of products" do
-    render
-    cell_selector = 'div>p'
+  it_behaves_like "displays product details" do
+    let(:products) { create_list(:product, 3) }
   end
 end

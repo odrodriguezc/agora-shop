@@ -5,4 +5,9 @@ class ApplicationPolicy
     @user = user
     @record = record
   end
+
+  private
+  def admin?
+    user&.has_role?(:admin)
+  end
 end

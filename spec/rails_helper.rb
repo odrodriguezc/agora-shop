@@ -75,7 +75,8 @@ RSpec.configure do |config|
     host! '127.0.0.1'
   end
 
-  # Include authentication context for request specs
+  # Include Helpers
   config.include AuthenticationHelpers, type: :request
   config.include UserHelpers
+  config.include ProductHelpers
 end

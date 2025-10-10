@@ -1,13 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe "products/edit", type: :view do
-  let(:product) {
-    Product.create!()
-  }
+  let(:product) { create(:product) }
 
-  before(:each) do
-    assign(:product, product)
-  end
+  before { assign(:product, product) }
 
   it "renders the edit product form" do
     render
