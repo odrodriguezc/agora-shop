@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative './shared_examples/_form'
 
 RSpec.describe "users/_form", type: :view do
   context "when rendering the form for a new user" do

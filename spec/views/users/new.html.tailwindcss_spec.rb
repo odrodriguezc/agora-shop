@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative './shared_examples/_form'
 
 RSpec.describe "users/new", type: :view do
   subject(:render_view) { render }

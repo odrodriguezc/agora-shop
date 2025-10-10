@@ -75,7 +75,7 @@ RSpec.configure do |config|
     host! '127.0.0.1'
   end
 
-  # Load authentication context for request specs
-  config.include_context "authentication context", type: :request
+  # Include authentication context for request specs
+  config.include AuthenticationHelpers, type: :request
   config.include UserHelpers
 end

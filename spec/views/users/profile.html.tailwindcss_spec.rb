@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative './shared_examples/_user'
 
 RSpec.describe "users/profile", type: :view do
   subject(:render_view) { render }
