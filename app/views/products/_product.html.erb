@@ -7,4 +7,20 @@
     <strong class="block font-medium mb-1">Description:</strong>
     <%= product.description %>
   </div>
+  <div>
+    <strong class="block font-medium mb-1">Price:</strong>
+    <%= number_to_currency(product.price) %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Stock quantity:</strong>
+    <%= product.stock_quantity %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">SKU:</strong>
+    <%= product.sku %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Status:</strong>
+    <%= product.status.humanize %>
+  </div>
 </div>
