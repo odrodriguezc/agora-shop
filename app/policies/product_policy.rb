@@ -12,16 +12,5 @@ class ProductPolicy < ApplicationPolicy
   #   # end
   # end
 
-  def show?
-    true
-  end
-  alias_method :index?, :show?
-
-  def create?
-    admin?
-  end
-  alias_method :new?, :create?
-  alias_method :edit?, :create?
-  alias_method :update?, :create?
-  alias_method :destroy?, :create?
+  include PublicReadAccessPolicy
 end

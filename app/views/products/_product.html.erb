@@ -23,4 +23,8 @@
     <strong class="block font-medium mb-1">Status:</strong>
     <%= product.status.humanize %>
   </div>
+  <div>
+    <strong class="block font-medium mb-1">Category:</strong>
+    <%= product.category&.name %>
+  </div>
 </div>

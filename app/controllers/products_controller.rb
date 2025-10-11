@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[ show edit update destroy ]
+  before_action :set_categories
   allow_unauthenticated_access only: %i[index show]
 
   # GET /products or /products.json
@@ -73,6 +74,10 @@ class ProductsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def product_params
-      params.fetch(:product, {}).permit(:title, :description, :status, :price, :stock_quantity, :sku)
+      params.fetch(:product, {}).permit(:title, :description, :status, :price, :stock_quantity, :sku, :category_id)
+    end
+
+    def set_categories
+      @categories = Category.all
     end
 end

@@ -76,7 +76,9 @@ RSpec.configure do |config|
   end
 
   # Include Helpers
+  # TODO: Autoloado all helpers in spec/support/helpers
   config.include AuthenticationHelpers, type: :request
   config.include UserHelpers
-  config.include ProductHelpers
+  config.include ProductHelpers, type: :request
+  config.include CategoryHelpers, type: :request
 end

@@ -5,20 +5,25 @@ RSpec.describe AdminPolicy, type: :policy do
 
   let(:record) { :admin }
   let(:admin_user) { create_admin_user }
-  let(:non_admin_user) { create_guest_user }
+  let(:not_admin_user) { create_guest_user }
 
-  it_behaves_like "a policy permitting a role admin to access",
-                  allow: :access
+  context "when the user is an admin" do
+    let(:user) { admin_user }
 
+    it_behaves_like "a policy permitting a role admin to access",
+                    allow: :access
+  end
   context "when the user lacks the admin role" do
-    let(:user) { non_admin_user }
+    let(:user) { not_admin_user }
 
-    it { is_expected.not_to permit(:access) }
+    it_behaves_like "a policy denying access for non-admin users",
+                    denied: :access
   end
 
   context "when there is no user" do
     let(:user) { nil }
 
-    it { is_expected.not_to permit(:access) }
+    it_behaves_like "a policy denying access for non-admin users",
+                    denied: :access
   end
 end

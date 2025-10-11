@@ -66,3 +66,32 @@ RSpec.shared_examples "rejects invalid product update" do |format:|
     expect(existing_product.price).not_to eq(-5)
   end
 end
+
+RSpec.shared_examples "updates product category successfully" do |format:|
+  it "updates the product's category and responds appropriately" do
+    category # ensure category is created
+    valid_params[:product][:category_id] = category.id
+    perform_request.call
+    updated_product.reload
+    expect(updated_product.category).to eq(category)
+    case format
+    when :html
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(product_url(existing_product))
+      expect(flash[:notice]).to eq("Product was successfully updated.")
+    when :json
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to include(
+        "id" => existing_product.id,
+        "title" => "Updated Product Title",
+        "price" => "19.99",
+        "category_id" => category.id
+      )
+    else
+      raise ArgumentError, "Unsupported format: #{format}"
+    end
+
+    existing_product.reload
+    expect(existing_product.category).to eq(category)
+  end
+end

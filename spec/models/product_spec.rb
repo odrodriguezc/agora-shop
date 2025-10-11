@@ -75,6 +75,15 @@ RSpec.describe Product, type: :model do
     end
   end
 
+  describe "associations" do
+    it "belongs to a category" do
+      category = create(:category)
+      product = build(:product, category: category)
+
+      expect(product.category).to eq(category)
+    end
+  end
+
   describe "status enum" do
     it "exposes the expected statuses" do
       expect(described_class.statuses.keys).to contain_exactly("draft", "published", "archived")

@@ -3,6 +3,9 @@ class Product < ApplicationRecord
 
   enum :status, { draft: "draft", published: "published", archived: "archived" }
 
+  # Associations
+  belongs_to :category, optional: true
+
   # Validations
   validates :title, presence: true, length: { maximum: 255 }
   validates :price, numericality: { greater_than_or_equal_to: 0 }

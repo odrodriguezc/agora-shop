@@ -6,6 +6,7 @@ RSpec.describe "POST /products", type: :request do
   let(:submitted_sku) { valid_params[:product][:sku] }
   let(:created_product) { Product.find_by(sku: submitted_sku) }
   let(:perform_request) { -> { post products_url(format: request_format, params: valid_params) } }
+  let(:category) { create(:category) }
 
   context "when the request format is HTML" do
     let(:request_format) { :html }
@@ -23,11 +24,12 @@ RSpec.describe "POST /products", type: :request do
       include_context "as admin user"
 
       context "with valid parameters" do
-        include_examples "creates product successfully", format: :html
+        it_behaves_like "creates product successfully with out category", format: :html
+        it_behaves_like "creates product successfully with category", format: :html
       end
 
       context "with invalid parameters" do
-        include_examples "rejects invalid product", format: :html
+        it_behaves_like "rejects invalid product", format: :html
       end
     end
   end
@@ -48,11 +50,12 @@ RSpec.describe "POST /products", type: :request do
       include_context "as admin user"
 
       context "with valid parameters" do
-        include_examples "creates product successfully", format: :json
+        it_behaves_like "creates product successfully with out category", format: :json
+        it_behaves_like "creates product successfully with category", format: :json
       end
 
       context "with invalid parameters" do
-        include_examples "rejects invalid product", format: :json
+        it_behaves_like "rejects invalid product", format: :json
       end
     end
   end

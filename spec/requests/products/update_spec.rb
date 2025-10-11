@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe "PATCH /products/:id", type: :request do
-  let(:existing_product) { create(:product) }
+  let(:existing_product) { create(:product, category_id: nil) }
   let(:valid_params) { { product: { title: "Updated Product Title", price: 19.99 } } }
   let(:invalid_params) { { product: { title: "", price: -5 } } }
   let(:updated_product) { Product.find(existing_product.id) }
   let(:perform_request) { -> { patch product_url(existing_product, format: request_format), params: valid_params } }
+  let(:category) { create(:category) }
 
   context "when the request format is HTML" do
     let(:request_format) { :html }
@@ -24,11 +25,12 @@ RSpec.describe "PATCH /products/:id", type: :request do
       include_context "as admin user"
 
       context "with valid parameters" do
-        include_examples "updates product successfully", format: :html
+        it_behaves_like "updates product successfully", format: :html
+        it_behaves_like "updates product category successfully", format: :html
       end
 
       context "with invalid parameters" do
-        include_examples "rejects invalid product update", format: :html
+        it_behaves_like "rejects invalid product update", format: :html
       end
     end
   end
@@ -50,11 +52,11 @@ RSpec.describe "PATCH /products/:id", type: :request do
       include_context "as admin user"
 
       context "with valid parameters" do
-        include_examples "updates product successfully", format: :json
+        it_behaves_like "updates product successfully", format: :json
       end
 
       context "with invalid parameters" do
-        include_examples "rejects invalid product update", format: :json
+        it_behaves_like "rejects invalid product update", format: :json
       end
     end
   end

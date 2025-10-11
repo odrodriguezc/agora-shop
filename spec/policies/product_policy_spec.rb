@@ -5,7 +5,7 @@ RSpec.describe ProductPolicy, type: :policy do
   let(:product) { create(:product) }
   let(:user) { nil }
   let(:admin_user) { create_admin_user }
-  let(:guest_user) { create_guest_user }
+  let(:not_admin_user) { create_guest_user }
 
   it_behaves_like "a policy exposing public read access", actions: %i[show index]
   it_behaves_like "a policy permitting a role admin to access",

@@ -5,6 +5,7 @@ RSpec.describe "products/new", type: :view do
 
   before do
     assign(:product, product)
+    assign(:categories, create_list(:category, 3))
   end
 
   subject(:render_view) { render }
