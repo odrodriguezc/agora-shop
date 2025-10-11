@@ -1,0 +1,141 @@
+<%
+content_for :title, "Coverage Report Details"
+%>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Overall Coverage Stats -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-8">
+    <div class="p-6 border-b border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900">Coverage Summary</h2>
+      <p class="text-sm text-gray-600 mt-1">Generated on <%= Time.at(@coverage_data['timestamp']).strftime('%B %d, %Y at %I:%M %p') %></p>
+    </div>
+    
+    <div class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="text-3xl font-bold <%= @coverage_data['metrics']['covered_percent'] >= 90 ? 'text-green-600' : @coverage_data['metrics']['covered_percent'] >= 80 ? 'text-yellow-600' : 'text-red-600' %>">
+            <%= '%.1f' % @coverage_data['metrics']['covered_percent'] %>%
+          </div>
+          <div class="text-sm text-gray-600 mt-1">Overall Coverage</div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-3xl font-bold text-blue-600">
+            <%= @coverage_data['metrics']['covered_lines'] %>
+          </div>
+          <div class="text-sm text-gray-600 mt-1">Lines Covered</div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-3xl font-bold text-gray-600">
+            <%= @coverage_data['metrics']['total_lines'] %>
+          </div>
+          <div class="text-sm text-gray-600 mt-1">Total Lines</div>
+        </div>
+        
+        <div class="text-center">
+          <div class="text-3xl font-bold text-purple-600">
+            <%= @coverage_data['files'].length %>
+          </div>
+          <div class="text-sm text-gray-600 mt-1">Files Analyzed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Coverage Details -->
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">File Coverage Details</h3>
+      <p class="text-sm text-gray-600 mt-1">Coverage breakdown by file</p>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coverage</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lines Covered</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Lines</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @coverage_data['files'].sort_by { |f| -f['covered_percent'] }.each do |file| %>
+            <% filename = file['filename'].gsub('/app/', '') %>
+            <% is_app_file = filename.start_with?('app/') %>
+            <% next unless is_app_file %> <!-- Show only app files -->
+            
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium">
+                  <%= link_to filename, admin_coverage_file_path(path: filename), 
+                      class: "text-blue-600 hover:text-blue-800 hover:underline" %>
+                </div>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                    <div class="<%= file['covered_percent'] >= 90 ? 'bg-green-500' : file['covered_percent'] >= 80 ? 'bg-yellow-500' : 'bg-red-500' %> h-2 rounded-full" 
+                         style="width: <%= file['covered_percent'] %>%"></div>
+                  </div>
+                  <span class="text-sm font-medium <%= file['covered_percent'] >= 90 ? 'text-green-600' : file['covered_percent'] >= 80 ? 'text-yellow-600' : 'text-red-600' %>">
+                    <%= '%.1f' % file['covered_percent'] %>%
+                  </span>
+                </div>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <%= file['covered_lines'] %>
+              </td>
+              
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                <%= file['lines_of_code'] %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Files with Low Coverage -->
+  <% low_coverage_files = @coverage_data['files'].select { |f| f['covered_percent'] < 80 && f['filename'].include?('/app/') } %>
+  <% if low_coverage_files.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg shadow-sm mt-8">
+      <div class="p-6 border-b border-red-200">
+        <h3 class="text-lg font-medium text-red-900">Files Needing Attention</h3>
+        <p class="text-sm text-red-700 mt-1">Files with less than 80% coverage</p>
+      </div>
+      
+      <div class="p-6">
+        <div class="space-y-4">
+          <% low_coverage_files.sort_by { |f| f['covered_percent'] }.each do |file| %>
+            <div class="flex items-center justify-between p-3 bg-white rounded border">
+              <div>
+                <div class="text-sm font-medium text-gray-900">
+                  <%= file['filename'].gsub('/app/', '') %>
+                </div>
+                <div class="text-xs text-gray-600">
+                  <%= file['covered_lines'] %> of <%= file['lines_of_code'] %> lines covered
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-lg font-bold text-red-600">
+                  <%= '%.1f' % file['covered_percent'] %>%
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Navigation -->
+  <div class="mt-8 text-center">
+    <%= link_to "← Back to Admin Coverage", admin_coverage_path, 
+        class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+  </div>
+</div>

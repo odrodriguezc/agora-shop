@@ -79,6 +79,11 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "rails-controller-testing"
+
+  # Simple - Coverage analysis for Ruby [https://simplecov.org]
+  gem "simplecov", require: false
+  gem "simplecov-tailwindcss", require: false
+  gem "simplecov-json", require: false
 end
 
 # Authorization library [https://github.com/varvet/pundit]

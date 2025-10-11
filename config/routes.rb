@@ -11,6 +11,10 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resource :access_check, only: :show, controller: "access_checks"
+    get "coverage", to: "coverage#show"
+    get "coverage/report", to: "coverage#report"
+    get "coverage/file", to: "coverage#file"
+    post "coverage/run_tests", to: "coverage#run_tests"
 
     # Mission Control web interface for monitoring background jobs
     mount MissionControl::Jobs::Engine, at: "/jobs"

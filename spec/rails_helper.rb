@@ -1,3 +1,45 @@
+# SimpleCov must be started before any application code is loaded
+require 'simplecov'
+require 'simplecov-tailwindcss'
+require 'simplecov-json'
+
+# Configure SimpleCov with proper filters and formatters
+SimpleCov.configure do
+  # Add Json formatter to generate coverage/coverage.json for use in the admin interface
+  formatter SimpleCov::Formatter::MultiFormatter.new([
+     SimpleCov::Formatter::TailwindFormatter, SimpleCov::Formatter::JSONFormatter
+    ])
+
+  # Exclude directories that shouldn't be included in coverage analysis
+  add_filter '/spec/'                    # Test files
+  add_filter '/test/'                    # Test files (if using TestUnit)
+  add_filter '/config/'                  # Configuration files
+  add_filter '/db/'                      # Database migrations, schema, seeds
+  add_filter '/vendor/'                  # Third-party code
+  add_filter '/bundle/'                  # Bundled gems
+  add_filter '/tmp/'                     # Temporary files
+  add_filter '/log/'                     # Log files
+  add_filter '/public/'                  # Static assets
+  add_filter '/coverage/'                # Coverage reports themselves
+  add_filter '/bin/'                     # Executable scripts
+  add_filter '/script/'                  # Legacy script directory
+
+  # Exclude specific generated files
+  add_filter 'app/channels/application_cable/channel.rb'
+  add_filter 'app/channels/application_cable/connection.rb'
+  add_filter 'app/jobs/application_job.rb'     # Often just inherits from ActiveJob
+  add_filter 'app/mailers/application_mailer.rb' # Often just configuration
+
+  # Set minimum coverage threshold (optional)
+  # minimum_coverage 90
+  enable_coverage :branch
+
+  # Output path
+  coverage_dir ENV.fetch('COVERAGE_REPORT_PATH', 'coverage')
+end
+
+SimpleCov.start
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
