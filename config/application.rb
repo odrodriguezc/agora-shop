@@ -24,6 +24,9 @@ module App
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    config.autoload_paths << root.join("app/lib")
+    config.eager_load_paths << root.join("app/lib")
+
     config.lograge.enabled = true
 
     # Mission Control Jobs monitoring configuration
@@ -32,5 +35,8 @@ module App
 
     # mailer
     config.action_mailer.deliver_later_queue_name = "mailers"
+
+    # db
+    config.active_record.schema_format = :sql
   end
 end

@@ -1,0 +1,11 @@
+id,name,Description,Price Unit,stock,external_id
+1,Product 1,Description for Product 1,10.99,100,aaa-111
+2,Product 2,Description for Product 2,20.99,200,aaa-222
+3,Product 3,Description for Product 3,30.99,300,aaa-333
+4,Product 4,Description for Product 4,40.99,400,aaa-444
+5,Product 5,Description for Product 5,50.99,500,aaa-555
+6,Product 6,Description for Product 6,60.99,600,aaa-666
+7,Product 7,Description for Product 7,70.99,700,aaa-777
+8,Product 8,Description for Product 8,80.99,800,aaa-888
+9,Product 9,Description for Product 9,90.99,900,aaa-999
+10,Product 10,Description for Product 10,100.99,1000,aaa-1010

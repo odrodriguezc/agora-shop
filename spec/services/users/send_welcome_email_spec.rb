@@ -7,6 +7,7 @@ RSpec.describe Users::SendWelcomeEmail, type: :service do
   let(:emailess_user) { build_user(email_address: nil) }
   subject(:send_welcome_email) { described_class.call(user) }
 
+
   describe ".call" do
     it "enqueues the welcome email job" do
       expect {

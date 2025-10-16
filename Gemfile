@@ -94,3 +94,6 @@ gem "rolify", "~> 6.0"
 
 # Jobs monitoring [mission control]
 gem "mission_control-jobs"
+
+# CSV
+gem "csv"

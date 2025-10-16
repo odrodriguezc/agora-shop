@@ -11,7 +11,6 @@ module DevelopmentSeeds
           product.category = i.even? ? Category.first : Category.last
           product.price = (i + 1) * 10.0
           product.stock_quantity = (i + 1) * 5
-          product.sku = "SKU#{1000 + i}"
           product.status = "published"
         end
       end

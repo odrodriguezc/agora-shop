@@ -52,11 +52,10 @@ RSpec.describe Product, type: :model do
       expect(product.errors.added?(:stock_quantity, :not_an_integer, value: 2.5)).to be(true)
     end
 
-    it "requires a SKU" do
+    it "does not require a SKU" do
       product = build(:product, sku: nil)
 
-      expect(product).not_to be_valid
-      expect(product.errors.added?(:sku, :blank)).to be(true)
+      expect(product).to be_valid
     end
 
     it "enforces SKU uniqueness" do
@@ -97,6 +96,16 @@ RSpec.describe Product, type: :model do
       expect(product.published?).to be(true)
       product.status = :archived
       expect(product.archived?).to be(true)
+    end
+  end
+
+  describe 'sku default generation' do
+    context 'when creating a new product without a SKU' do
+      it 'generates a SKU' do
+        product = create(:product, sku: nil)
+
+        expect(product.sku).to match(Product::SKU_FORMAT)
+      end
     end
   end
 end

@@ -117,6 +117,11 @@ RSpec.configure do |config|
     host! '127.0.0.1'
   end
 
+  # Configure ActiveJob test adapter
+  config.before(:each) do
+    ActiveJob::Base.queue_adapter = :test
+  end
+
   # Include Helpers
   # TODO: Autoloado all helpers in spec/support/helpers
   config.include AuthenticationHelpers, type: :request

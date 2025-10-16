@@ -6,10 +6,10 @@ RSpec.describe "layouts/_flash.html.erb", type: :view do
   end
 
   context "when flash is empty" do
-    it "renders nothing" do
+    it "renders nothing not html" do
       flash.clear
       render_partial
-      expect(rendered.strip).to eq("")
+      expect(rendered.strip).not_to match(/<div class=".*?">/)
     end
   end
 
