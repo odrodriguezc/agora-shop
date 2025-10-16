@@ -82,8 +82,8 @@ group :test do
 
   # Simple - Coverage analysis for Ruby [https://simplecov.org]
   gem "simplecov", require: false
-
-  # Test performance profiling [
+  gem "simplecov-tailwindcss", require: false
+  gem "simplecov-json", require: false
 end
 
 # Authorization library [https://github.com/varvet/pundit]
