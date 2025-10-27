@@ -84,6 +84,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Lograge configuration
+  config.lograge.logger = LogStashLogger.new(type: :file, path: Rails.root.join("log/development.log"))
   config.lograge.custom_options = lambda do |event|
     exceptions = %w[controller action]
     {

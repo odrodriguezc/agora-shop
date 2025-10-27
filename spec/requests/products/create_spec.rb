@@ -7,7 +7,10 @@ RSpec.describe "POST /products", type: :request do
   let(:created_product) { Product.find_by(sku: submitted_sku) }
   let(:perform_request) { -> { post products_url(format: request_format, params: valid_params) } }
   let(:category) { create(:category) }
-
+  before do
+    Category.delete_all
+    Product.delete_all
+  end
   context "when the request format is HTML" do
     let(:request_format) { :html }
     context "when the user is unauthenticated" do

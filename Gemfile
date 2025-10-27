@@ -34,6 +34,7 @@ gem "bootsnap", require: false
 # Structured logging
 gem "lograge"
 gem "logstash-event"
+gem "logstash-logger"
 
 # Tailwind CSS framework [https://tailwindcss.com/]
 gem "tailwindcss-rails"

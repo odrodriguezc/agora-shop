@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
 
   # GET /products or /products.json
   def index
+    Rails.logger.info([ "tcp logging test", { test_key: "test_value" } ])
     @products = Product.all
     authorize Product
   end

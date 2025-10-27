@@ -56,7 +56,6 @@ end
 
 RSpec.shared_examples "creates product successfully with category" do |format:|
   it "creates a product and responds appropriately" do
-    category # ensure category is created
     valid_params[:product][:category_id] = category.id
     expect {
       post products_url(format: format, params: valid_params)

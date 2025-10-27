@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "DELETE /products/:id", type: :request do
   let(:product) { create(:product) }
   let(:perform_request) { -> { delete product_url(product) } }
+
   context "when the format is HTML" do
     before { product } # Ensure the product is created before each test
     context "when the user is unauthenticated" do
