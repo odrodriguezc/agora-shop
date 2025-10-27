@@ -4,7 +4,6 @@ require 'rails_helper'
 RSpec.describe "GET /categories/:id", type: :request do
   let(:category) { create(:category) }
   let(:perform_request) { -> { get category_url(category, format: request_format) } }
-
   context "when the request format is HTML" do
     let(:request_format) { :html }
     context "when the user is unauthenticated" do
