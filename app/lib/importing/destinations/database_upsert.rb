@@ -1,5 +1,5 @@
 module Importing::Destinations
-  class Database < Base
+  class DatabaseUpsert < Base
     def initialize(**options)
       super
       @buffer = []
@@ -16,7 +16,6 @@ module Importing::Destinations
       flush
     end
 
-    # TODO: Add tests for flush and close behavior
     def flush
       return if buffer.empty?
 

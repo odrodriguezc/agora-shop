@@ -46,15 +46,6 @@ RSpec.describe Importing::Pipelines::ProductsFromCSVToLogger do
   end
 
   describe '#build_source' do
-    context 'when built source without required options' do
-      subject(:pipeline) do
-        described_class.new(key: 'products_from_csv_to_logger')
-      end
-      it 'raises an ArgumentError' do
-        expect {
-          pipeline.build_source
-        }.to raise_error(ArgumentError, /requires a non-empty :file_path option/)
-      end
-    end
+    it_behaves_like 'require file_path option', pipeline_class: described_class, key: 'products_from_csv_to_logger'
   end
 end

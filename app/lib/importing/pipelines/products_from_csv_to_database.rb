@@ -13,7 +13,7 @@ module Importing::Pipelines
     end
 
     def build_destination
-      Importing::Destinations::Database.new(model: Product)
+      Importing::Destinations::DatabaseUpsert.new(model: Product)
     end
   end
 end

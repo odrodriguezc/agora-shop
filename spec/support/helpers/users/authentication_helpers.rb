@@ -20,5 +20,6 @@ module AuthenticationHelpers
   def sign_out
     Current.session&.destroy!
     cookies.delete(:session_id)
+    Current.session = nil # To avoid error because the Current.session still holds the destroyed session (memoized)
   end
 end

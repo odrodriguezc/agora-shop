@@ -6,7 +6,7 @@ FactoryBot.define do
     stock_quantity { 100 }
     status { "draft" }
     sequence(:sku) { |n| format("SKU%08d", n) }
-    category { association :category }
+    category nil
   end
 
   factory :draft_product, parent: :product do
