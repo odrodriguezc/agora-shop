@@ -25,6 +25,7 @@ module App
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.autoload_paths << root.join("app/lib")
+    config.autoload_paths << root.join("app/queries")
     config.eager_load_paths << root.join("app/lib")
 
     config.lograge.enabled = true
