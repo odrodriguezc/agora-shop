@@ -5,6 +5,8 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     nodejs npm postgresql-client libpq-dev build-essential \
  && rm -rf /var/lib/apt/lists/*
 
+ # Install ImageMagick for Active Storage
+RUN apt-get install -y imagemagick libmagickwand-dev
 # Install Yarn and Bundler
 RUN npm install -g yarn
 RUN gem install bundler rails

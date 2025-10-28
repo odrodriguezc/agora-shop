@@ -1,7 +1,10 @@
 class Product < ApplicationRecord
+  include Imageable
+
   PERMITTED_ATTRIBUTES = %i[title description price stock_quantity sku category_id].freeze
   SKU_FORMAT = /\ASKU\d+\z/
 
+  has_rich_text :description
   enum :status, { draft: "draft", published: "published", archived: "archived" }
 
   # Associations
