@@ -28,6 +28,9 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      LOGSTASH_LOGGING_ENABLED: ${LOGSTASH_LOGGING_ENABLED:-false} # Default to false if not set
+      LOGSTASH_HOST: ${LOGSTASH_HOST:-}
+      LOGSTASH_PORT: ${LOGSTASH_PORT:-5514}
     depends_on:
       db:
         condition: service_healthy
@@ -39,6 +42,9 @@ services:
       co.elastic.logs/enabled: "true"
     stdin_open: true
     tty: true
+    networks:
+      - default
+      - logging
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -78,3 +84,8 @@ services:
 volumes:
   db_data:
   pgadmin_data:
+
+networks:
+  logging:
+    name: logging-net
+    external: true

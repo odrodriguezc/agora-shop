@@ -38,3 +38,7 @@
 
 # Ignore simplecov results
 /coverage/*
+
+# Ignore vendored Ruby gems (installed by `bundle install --path vendor/bundle`)
+/vendor/*
+/vendor
